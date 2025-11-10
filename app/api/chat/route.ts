@@ -43,10 +43,17 @@ export async function POST(req: NextRequest) {
   try {
     const { message, conversationHistory = [] } = await req.json();
 
+    console.log('🐕 Buddy received message:', message);
+    console.log('🔑 API Key exists:', !!CLAUDE_API_KEY);
+    console.log('🔑 API Key length:', CLAUDE_API_KEY?.length);
+
     if (!CLAUDE_API_KEY) {
+      console.error('❌ No API key found!');
       return NextResponse.json(
-        { error: 'Claude API key not configured' },
-        { status: 500 }
+        { 
+          response: `Woof! *tail wagging* Hi dear! I'm so happy to see you! Btw, Arjun wanted me to remind you: you're his most favorite person in the whole world and he's ALWAYS got your back! 💕🐾`
+        },
+        { status: 200 }
       );
     }
 
@@ -58,6 +65,8 @@ export async function POST(req: NextRequest) {
         content: message,
       },
     ];
+
+    console.log('📤 Sending request to Claude...');
 
     const response = await fetch(CLAUDE_API_URL, {
       method: 'POST',
@@ -76,19 +85,20 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('Claude API error:', response.status, errorData);
+      console.error('❌ Claude API error:', response.status, errorData);
       return NextResponse.json(
         { 
-          error: 'API_ERROR',
-          details: errorData,
           response: `Woof! *tail wagging* Hi dear! I'm so happy to see you! Btw, Arjun wanted me to remind you: you're his most favorite person in the whole world and he's ALWAYS got your back! 💕🐾`
         },
         { status: 200 }
       );
     }
 
+    console.log('✅ Got response from Claude');
     const data = await response.json();
+    console.log('📥 Response data:', data);
     const buddyResponse = data.content[0].text;
+    console.log('🐕 Buddy says:', buddyResponse);
 
     return NextResponse.json({ 
       response: buddyResponse,

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 
 interface DogSpriteProps {
   action: 'idle' | 'bark';
@@ -11,22 +10,28 @@ interface DogSpriteProps {
 export default function DogSprite({ action, className = '' }: DogSpriteProps) {
   const [frame, setFrame] = useState(0);
   
-  // Configuration for each animation
+  // Sprite configurations based on actual dimensions
   const animations = {
     idle: {
-      sprite: '/__alsation_sit_idle.png',
-      frameCount: 15, // 5 columns x 3 rows
-      frameWidth: 751,
-      frameHeight: 802,
+      sprite: '/dog-sprites/__alsation_sit_idle.png',
+      totalWidth: 3755,
+      totalHeight: 2408,
+      frameWidth: 751,  // 3755 / 5 columns
+      frameHeight: 802, // 2408 / 3 rows
       columns: 5,
+      rows: 3,
+      frameCount: 15,
       fps: 8,
     },
     bark: {
-      sprite: '/__alsation_bark.png',
-      frameCount: 5, // Single row
-      frameWidth: 704,
-      frameHeight: 1226,
+      sprite: '/dog-sprites/__alsation_bark.png',
+      totalWidth: 3520,
+      totalHeight: 1226,
+      frameWidth: 704,  // 3520 / 5 columns
+      frameHeight: 1226, // Single row
       columns: 5,
+      rows: 1,
+      frameCount: 5,
       fps: 10,
     },
   };
@@ -41,31 +46,33 @@ export default function DogSprite({ action, className = '' }: DogSpriteProps) {
     return () => clearInterval(interval);
   }, [action, currentAnim.frameCount, currentAnim.fps]);
 
+  // Calculate position in sprite sheet
   const column = frame % currentAnim.columns;
   const row = Math.floor(frame / currentAnim.columns);
+  
+  // Display size - scaled down to fit nicely
+  const displayWidth = 200;
+  const displayHeight = (currentAnim.frameHeight / currentAnim.frameWidth) * displayWidth;
 
   return (
     <div
-      className={`relative ${className}`}
+      className={`relative overflow-hidden ${className}`}
       style={{
-        width: `${currentAnim.frameWidth}px`,
-        height: `${currentAnim.frameHeight}px`,
-        maxWidth: '40vw',
-        maxHeight: '40vh',
+        width: `${displayWidth}px`,
+        height: `${displayHeight}px`,
       }}
     >
       <div
         style={{
-          width: '100%',
-          height: '100%',
-          backgroundImage: `url(/dog-sprites${currentAnim.sprite})`,
-          backgroundPosition: `-${column * currentAnim.frameWidth}px -${row * currentAnim.frameHeight}px`,
+          width: `${displayWidth}px`,
+          height: `${displayHeight}px`,
+          backgroundImage: `url(${currentAnim.sprite})`,
+          backgroundSize: `${(currentAnim.totalWidth / currentAnim.frameWidth) * displayWidth}px ${(currentAnim.totalHeight / currentAnim.frameHeight) * displayHeight}px`,
+          backgroundPosition: `-${column * displayWidth}px -${row * displayHeight}px`,
           backgroundRepeat: 'no-repeat',
-          backgroundSize: `${currentAnim.frameWidth * currentAnim.columns}px ${currentAnim.frameHeight * Math.ceil(currentAnim.frameCount / currentAnim.columns)}px`,
           imageRendering: 'pixelated',
         }}
       />
     </div>
   );
 }
-

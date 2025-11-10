@@ -123,18 +123,17 @@ export default function BuddyChat() {
           )}
 
           {/* Animated Dog */}
-          <div className="flex justify-center items-center min-h-[40vh] px-4 mt-8 relative">
+          <div className="flex justify-center items-end min-h-[45vh] px-4 relative">
             <motion.div
               animate={{
-                y: dogAction === 'happy' ? [0, -15, 0] : dogAction === 'excited' ? [0, -30, -15, -30, 0] : [0, -8, 0],
-                rotate: dogAction === 'excited' ? [-3, 3, -3, 3, 0] : 0,
+                y: dogAction === 'happy' ? [0, -10, 0] : dogAction === 'excited' ? [0, -20, -10, -20, 0] : [0, -5, 0],
               }}
               transition={{
                 duration: dogAction === 'excited' ? 0.6 : 2,
                 repeat: dogAction === 'idle' ? Infinity : dogAction === 'excited' ? 3 : 2,
                 repeatType: 'reverse',
               }}
-              className="relative"
+              className="relative mb-8"
             >
               
               {/* Speech Bubble - Near Mouth */}
