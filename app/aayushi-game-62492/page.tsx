@@ -14,14 +14,12 @@ type ActionButton = {
 };
 
 const ACTIONS: ActionButton[] = [
-  { key: 'idle', label: 'Idle Bounce', icon: '😌', description: 'Buddy is vibing' },
+  { key: 'idle', label: 'Idle Bounce', icon: '😌', description: 'Buddy does a happy bounce' },
   { key: 'sitIdle', label: 'Sit Idle', icon: '🪑', description: 'Buddy sits patiently' },
-  { key: 'sit', label: 'Sit', icon: '🐕‍🦺', description: 'Buddy sits with attention' },
-  { key: 'stand', label: 'Stand', icon: '🦴', description: 'Buddy is ready to go' },
   { key: 'walk', label: 'Walk', icon: '🚶‍♂️', description: 'Buddy takes a stroll' },
   { key: 'run', label: 'Run', icon: '🏃‍♀️', description: 'Buddy zoomies!' },
   { key: 'bark', label: 'Bark', icon: '🐶', description: 'Buddy woofs lovingly' },
-  { key: 'sleep', label: 'Sleep', icon: '💤', description: 'Buddy naps peacefully' },
+  { key: 'sleepIdle', label: 'Sleep Idle', icon: '💤', description: 'Buddy naps peacefully' },
 ];
 
 const SPECIAL_MESSAGE = `Hi Aayushi! 💕
@@ -34,8 +32,6 @@ He wants you to know that no matter what happens, he's ALWAYS got your back. You
 
 You're precious, amazing, and incredibly special. Never forget that!
 
-Happy early birthday (March 7th)! And say hi to your twin sister for me! 🎂
-
 With all the love,
 Buddy & Arjun 💕🐾`;
 
@@ -46,7 +42,7 @@ export default function BuddyWorld() {
   const activeInfo = useMemo(() => ACTIONS.find((action) => action.key === dogAction), [dogAction]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative flex min-h-[100dvh] w-full overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <Image
@@ -59,13 +55,13 @@ export default function BuddyWorld() {
         <div className="absolute inset-0 bg-gradient-to-b from-sky-100/30 via-blue-50/30 to-purple-50/30" />
       </div>
 
-      <div className="relative z-10 h-full w-full flex flex-col">
+      <div className="relative z-10 flex w-full flex-col justify-between px-4 pb-5 pt-6">
         {/* Header */}
-        <div className="flex-shrink-0 py-4 px-5 flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/95 backdrop-blur-sm border-4 border-purple-500 rounded-3xl px-6 py-3 shadow-xl text-center max-w-xs"
+            className="max-w-xs rounded-3xl border-4 border-purple-500 bg-white/95 px-6 py-3 text-center shadow-xl backdrop-blur-sm"
           >
             <p className="text-lg text-purple-700 font-bold" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
               Hi Aayushi! 💕
@@ -78,26 +74,37 @@ export default function BuddyWorld() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowMessage(true)}
-            className="bg-yellow-300/90 text-purple-900 px-4 py-2 rounded-full border-2 border-yellow-500 shadow-lg font-bold"
+            className="rounded-full border-2 border-yellow-500 bg-yellow-300/90 px-4 py-2 font-bold text-purple-900 shadow-lg"
             style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}
           >
-            💌 Tap for Arjun's love note
+            💌 Tap to see Arjun's note
           </motion.button>
         </div>
 
         {/* Dog viewport */}
-        <div className="flex-1 flex items-center justify-center">
-          <DogSprite action={dogAction} className="drop-shadow-[0_12px_24px_rgba(128,64,255,0.35)]" targetHeight={230} />
+        <div className="flex flex-1 items-center justify-center">
+          <motion.div
+            key={dogAction}
+            animate={dogAction === 'idle' ? { y: [0, -10, 0] } : { y: 0 }}
+            transition={
+              dogAction === 'idle'
+                ? { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }
+                : { duration: 0.3, ease: 'easeOut' }
+            }
+            className="rounded-[28px] bg-white/55 px-6 py-4 shadow-[0_18px_34px_rgba(88,48,176,0.28)] backdrop-blur-sm"
+          >
+            <DogSprite action={dogAction} className="drop-shadow-[0_12px_24px_rgba(128,64,255,0.35)]" targetHeight={210} />
+          </motion.div>
         </div>
 
         {/* Action Bar */}
-        <div className="flex-shrink-0 pb-5 px-4">
+        <div className="flex flex-col gap-3">
           {activeInfo && (
-            <div className="mb-3 text-center text-purple-800 font-bold" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
+            <div className="text-center font-bold text-purple-800" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
               {activeInfo.icon} {activeInfo.description}
             </div>
           )}
-          <div className="bg-white/95 backdrop-blur-sm border-4 border-purple-400 rounded-3xl shadow-2xl px-3 py-3 flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-2 rounded-3xl border-4 border-purple-400 bg-white/95 px-3 py-3 shadow-2xl backdrop-blur-sm">
             {ACTIONS.map((action) => {
               const isActive = action.key === dogAction;
               return (

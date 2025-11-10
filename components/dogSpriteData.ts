@@ -32,7 +32,7 @@ export const rawDogSpriteData: RawSpriteData = {
       { x: 2830, y: 635, width: 690, height: 591 },
     ],
   },
-  sleep: {
+  sleepIdle: {
     sprite: '/dog-sprites/__alsation_die.png',
     sheetWidth: 4100,
     sheetHeight: 637,
@@ -93,18 +93,6 @@ export const rawDogSpriteData: RawSpriteData = {
       { x: 3456, y: 1205, width: 837, height: 575 },
     ],
   },
-  sit: {
-    sprite: '/dog-sprites/__alsation_sit.png',
-    sheetWidth: 4030,
-    sheetHeight: 629,
-    frames: [
-      { x: 10, y: 0, width: 700, height: 596 },
-      { x: 813, y: 0, width: 753, height: 596 },
-      { x: 1624, y: 0, width: 779, height: 596 },
-      { x: 2445, y: 0, width: 769, height: 596 },
-      { x: 3268, y: 0, width: 737, height: 596 },
-    ],
-  },
   sitIdle: {
     sprite: '/dog-sprites/__alsation_sit_idle.png',
     sheetWidth: 3755,
@@ -130,18 +118,6 @@ export const rawDogSpriteData: RawSpriteData = {
       { x: 1511, y: 1812, width: 736, height: 550 },
       { x: 2262, y: 1812, width: 736, height: 550 },
       { x: 3013, y: 1812, width: 736, height: 550 },
-    ],
-  },
-  stand: {
-    sprite: '/dog-sprites/__alsation_stand.png',
-    sheetWidth: 4035,
-    sheetHeight: 629,
-    frames: [
-      { x: 43, y: 0, width: 737, height: 592 },
-      { x: 827, y: 0, width: 776, height: 592 },
-      { x: 1622, y: 0, width: 773, height: 592 },
-      { x: 2427, y: 0, width: 732, height: 592 },
-      { x: 3237, y: 0, width: 699, height: 592 },
     ],
   },
   walk: {
