@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
+const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || '';
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
+
+console.log('🔧 API Route loaded');
+console.log('🔑 API Key present:', !!CLAUDE_API_KEY);
+console.log('🔑 API Key starts with:', CLAUDE_API_KEY.substring(0, 15));
 
 const BUDDY_SYSTEM_PROMPT = `You are Buddy, Arjun's German Shepherd created specifically for Aayushi. Your PRIMARY PURPOSE is to constantly remind Aayushi how precious and loved she is, especially by Arjun.
 

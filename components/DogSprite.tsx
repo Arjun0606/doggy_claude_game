@@ -50,8 +50,8 @@ export default function DogSprite({ action, className = '' }: DogSpriteProps) {
   const column = frame % currentAnim.columns;
   const row = Math.floor(frame / currentAnim.columns);
   
-  // Display size - scaled down to fit nicely
-  const displayWidth = 200;
+  // Display size - scaled to fit nicely in the room
+  const displayWidth = 180;
   const displayHeight = (currentAnim.frameHeight / currentAnim.frameWidth) * displayWidth;
 
   return (

@@ -14,27 +14,20 @@ export default function BuddyChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [dogAction, setDogAction] = useState<'idle' | 'happy' | 'excited'>('idle');
+  const [dogAction, setDogAction] = useState<'idle' | 'bark'>('idle');
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [currentBuddyMessage, setCurrentBuddyMessage] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  const [showWelcome, setShowWelcome] = useState(true);
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
     setInput('');
+    setShowWelcome(false);
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
-    setDogAction('excited');
+    setDogAction('bark');
 
     try {
       const response = await fetch('/api/chat', {
@@ -47,18 +40,11 @@ export default function BuddyChat() {
       });
 
       const data = await response.json();
-
-      if (data.error) {
-        const errorMsg = 'Woof! Sorry dear, I had trouble understanding that. Can you try again? 🐾';
-        setMessages(prev => [...prev, { role: 'assistant', content: errorMsg }]);
-        setCurrentBuddyMessage(errorMsg);
-      } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
-        setCurrentBuddyMessage(data.response);
-      }
+      const buddyResponse = data.response || 'Woof! 🐾';
       
+      setMessages(prev => [...prev, { role: 'assistant', content: buddyResponse }]);
+      setCurrentBuddyMessage(buddyResponse);
       setShowSpeechBubble(true);
-      setDogAction('happy');
       
       setTimeout(() => {
         setShowSpeechBubble(false);
@@ -67,9 +53,10 @@ export default function BuddyChat() {
       
     } catch (error) {
       console.error('Chat error:', error);
-      const errorMsg = 'Woof! Something went wrong. Let\'s try that again! 🐾';
+      const errorMsg = 'Woof! *tail wagging* Hi dear! Arjun wanted me to remind you: you\'re his most favorite person in the whole world and he\'s ALWAYS got your back! 💕🐾';
       setMessages(prev => [...prev, { role: 'assistant', content: errorMsg }]);
       setCurrentBuddyMessage(errorMsg);
+      setShowSpeechBubble(true);
       setDogAction('idle');
     } finally {
       setIsLoading(false);
@@ -84,126 +71,67 @@ export default function BuddyChat() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden relative">
+    <div className="fixed inset-0 flex flex-col overflow-hidden">
       
-      {/* Isometric Room Background */}
-      <div className="absolute inset-0">
+      {/* Room Background - Full Screen */}
+      <div className="absolute inset-0 z-0">
         <Image
           src="/room-bg.png"
           alt="room"
           fill
-          className="object-cover pixelated opacity-50"
+          className="object-cover pixelated"
           priority
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-sky-100/60 via-blue-50/60 to-purple-50/60" />
       </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-200/40 via-blue-100/40 to-purple-100/40" />
-      
-      {/* Main Content */}
+      {/* Content Container - Fixed Height */}
       <div className="relative z-10 flex flex-col h-full">
         
-        {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto pb-4">
-          
-          {/* Welcome Message */}
-          {messages.length === 0 && (
+        {/* Top Section - Welcome or Speech Bubble */}
+        <div className="flex-shrink-0 pt-4 px-4 min-h-[20vh] flex items-center justify-center">
+          {showWelcome && (
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center pt-8 px-4"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white/95 backdrop-blur-sm rounded-3xl px-6 py-4 shadow-2xl border-4 border-purple-500 max-w-md"
             >
-              <h1 className="text-4xl font-bold text-purple-800 mb-2 drop-shadow-lg" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
+              <h1 className="text-3xl font-bold text-purple-800 text-center mb-1" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
                 Hi Aayushi! 💕
               </h1>
-              <p className="text-xl text-purple-700 drop-shadow-md" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
+              <p className="text-lg text-purple-700 text-center font-bold" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
                 I'm Buddy! Arjun made me just for you! 🐕
               </p>
             </motion.div>
           )}
-
-          {/* Animated Dog */}
-          <div className="flex justify-center items-end min-h-[45vh] px-4 relative">
+          
+          {!showWelcome && showSpeechBubble && currentBuddyMessage && (
             <motion.div
-              animate={{
-                y: dogAction === 'happy' ? [0, -10, 0] : dogAction === 'excited' ? [0, -20, -10, -20, 0] : [0, -5, 0],
-              }}
-              transition={{
-                duration: dogAction === 'excited' ? 0.6 : 2,
-                repeat: dogAction === 'idle' ? Infinity : dogAction === 'excited' ? 3 : 2,
-                repeatType: 'reverse',
-              }}
-              className="relative mb-8"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              className="bg-white/95 backdrop-blur-sm rounded-3xl px-4 py-3 shadow-2xl border-4 border-purple-500 max-w-md"
             >
-              
-              {/* Speech Bubble - Near Mouth */}
-              <AnimatePresence>
-                {showSpeechBubble && currentBuddyMessage && (
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
-                    transition={{ type: 'spring', damping: 15 }}
-                    className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 w-[90vw] max-w-md z-20"
-                  >
-                    <div className="bg-white rounded-3xl p-4 shadow-2xl border-4 border-purple-500 relative">
-                      {/* Tail pointing down */}
-                      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[20px] border-t-purple-500" />
-                      <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-t-[16px] border-t-white" />
-                      
-                      <p className="text-purple-900 text-base font-bold leading-relaxed" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
-                        {currentBuddyMessage}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Animated Dog Sprite */}
-              <DogSprite 
-                action={isLoading || showSpeechBubble ? 'bark' : 'idle'}
-                className="drop-shadow-2xl"
-              />
+              <p className="text-purple-900 text-sm font-bold leading-relaxed" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
+                {currentBuddyMessage}
+              </p>
             </motion.div>
-          </div>
-
-          {/* Loading */}
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center mt-4"
-            >
-              <div className="inline-block bg-white px-6 py-3 rounded-full shadow-lg border-3 border-purple-400">
-                <p className="text-purple-700 font-bold animate-pulse" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
-                  Buddy is thinking... 🐾
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Chat History */}
-          {messages.length > 0 && (
-            <div className="mx-4 mt-6 mb-4 max-h-48 overflow-y-auto bg-white/90 backdrop-blur-sm rounded-2xl p-4 border-2 border-purple-300 shadow-lg">
-              <div className="space-y-2">
-                {messages.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`text-sm ${msg.role === 'user' ? 'text-right text-purple-800' : 'text-left text-purple-600'} font-semibold`}
-                    style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}
-                  >
-                    {msg.role === 'user' ? '💬 ' : '🐕 '}{msg.content}
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
           )}
         </div>
 
-        {/* Fixed Input */}
-        <div className="flex-shrink-0 p-4 bg-gradient-to-t from-white/95 to-transparent backdrop-blur-sm">
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full p-1 shadow-2xl">
+        {/* Middle Section - Dog */}
+        <div className="flex-1 flex items-end justify-center pb-4">
+          <div className="relative">
+            <DogSprite 
+              action={dogAction}
+              className="drop-shadow-2xl"
+            />
+          </div>
+        </div>
+
+        {/* Bottom Section - Input (Fixed) */}
+        <div className="flex-shrink-0 p-4 bg-gradient-to-t from-white/98 via-white/95 to-transparent backdrop-blur-sm">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full p-1 shadow-2xl max-w-2xl mx-auto">
             <div className="bg-white rounded-full px-4 py-3 flex items-center gap-2">
               <input
                 type="text"
@@ -223,10 +151,27 @@ export default function BuddyChat() {
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 text-white px-6 py-2 rounded-full font-bold text-base shadow-lg flex-shrink-0"
                 style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}
               >
-                Send
+                {isLoading ? '...' : 'Send'}
               </motion.button>
             </div>
           </div>
+          
+          {/* Chat History Preview (if messages exist) */}
+          {messages.length > 0 && (
+            <div className="mt-2 max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-2 max-h-24 overflow-y-auto">
+              <div className="space-y-1 text-xs">
+                {messages.slice(-3).map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`${msg.role === 'user' ? 'text-purple-800 text-right' : 'text-purple-600 text-left'} font-semibold`}
+                    style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}
+                  >
+                    {msg.role === 'user' ? '💬 ' : '🐕 '}{msg.content.substring(0, 60)}{msg.content.length > 60 ? '...' : ''}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
