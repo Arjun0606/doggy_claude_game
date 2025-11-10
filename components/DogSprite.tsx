@@ -1,80 +1,61 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { DogAction, rawDogSpriteData } from './dogSpriteData';
 
-interface DogSpriteProps {
-  action: 'idle' | 'bark';
+type Props = {
+  action: DogAction;
+  targetHeight?: number;
   className?: string;
-}
+};
 
-export default function DogSprite({ action, className = '' }: DogSpriteProps) {
-  const [frame, setFrame] = useState(0);
-  
-  // Sprite configurations based on actual dimensions
-  const animations = {
-    idle: {
-      sprite: '/dog-sprites/__alsation_sit_idle.png',
-      totalWidth: 3755,
-      totalHeight: 2408,
-      frameWidth: 751,  // 3755 / 5 columns
-      frameHeight: 802, // 2408 / 3 rows
-      columns: 5,
-      rows: 3,
-      frameCount: 15,
-      fps: 8,
-    },
-    bark: {
-      sprite: '/dog-sprites/__alsation_bark.png',
-      totalWidth: 3520,
-      totalHeight: 1226,
-      frameWidth: 704,  // 3520 / 5 columns
-      frameHeight: 1226, // Single row
-      columns: 5,
-      rows: 1,
-      frameCount: 5,
-      fps: 10,
-    },
-  };
+export default function DogSprite({ action, targetHeight = 220, className = '' }: Props) {
+  const [frameIndex, setFrameIndex] = useState(0);
 
-  const currentAnim = animations[action];
+  const data = rawDogSpriteData[action] ?? rawDogSpriteData.idle;
+  const frames = data.frames;
+
+  const { maxFrameWidth, maxFrameHeight } = useMemo(() => {
+    let maxWidth = 0;
+    let maxHeight = 0;
+    for (const frame of frames) {
+      if (frame.width > maxWidth) maxWidth = frame.width;
+      if (frame.height > maxHeight) maxHeight = frame.height;
+    }
+    return { maxFrameWidth: maxWidth, maxFrameHeight: maxHeight };
+  }, [frames]);
+
+  const scale = targetHeight / maxFrameHeight;
+  const containerWidth = maxFrameWidth * scale;
+  const containerHeight = maxFrameHeight * scale;
 
   useEffect(() => {
+    setFrameIndex(0);
     const interval = setInterval(() => {
-      setFrame((prev) => (prev + 1) % currentAnim.frameCount);
-    }, 1000 / currentAnim.fps);
+      setFrameIndex((prev) => (prev + 1) % frames.length);
+    }, 1000 / 12);
 
     return () => clearInterval(interval);
-  }, [action, currentAnim.frameCount, currentAnim.fps]);
+  }, [frames]);
 
-  // Calculate position in sprite sheet
-  const column = frame % currentAnim.columns;
-  const row = Math.floor(frame / currentAnim.columns);
-  
-  // Display size - scaled to fit nicely in the room
-  const displayWidth = 150;
-  const displayHeight = (currentAnim.frameHeight / currentAnim.frameWidth) * displayWidth;
-  
-  // Calculate background size (total sprite sheet scaled)
-  const bgWidth = (currentAnim.totalWidth / currentAnim.frameWidth) * displayWidth;
-  const bgHeight = (currentAnim.totalHeight / currentAnim.frameHeight) * displayHeight;
+  const frame = frames[frameIndex];
 
   return (
     <div
       className={`relative ${className}`}
       style={{
-        width: `${displayWidth}px`,
-        height: `${displayHeight}px`,
-        overflow: 'hidden',
+        width: `${containerWidth}px`,
+        height: `${containerHeight}px`,
       }}
     >
       <div
         style={{
-          width: `${displayWidth}px`,
-          height: `${displayHeight}px`,
-          backgroundImage: `url(${currentAnim.sprite})`,
-          backgroundSize: `${bgWidth}px ${bgHeight}px`,
-          backgroundPosition: `-${column * displayWidth}px -${row * displayHeight}px`,
+          width: `${containerWidth}px`,
+          height: `${containerHeight}px`,
+          backgroundImage: `url(${data.sprite})`,
           backgroundRepeat: 'no-repeat',
+          backgroundSize: `${data.sheetWidth * scale}px ${data.sheetHeight * scale}px`,
+          backgroundPosition: `-${frame.x * scale}px -${frame.y * scale}px`,
           imageRendering: 'pixelated',
         }}
       />
