@@ -71,7 +71,7 @@ export default function BuddyChat() {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 flex flex-col overflow-hidden" style={{ height: '100vh', maxHeight: '100vh' }}>
       
       {/* Room Background - Full Screen */}
       <div className="absolute inset-0 z-0">
@@ -86,7 +86,7 @@ export default function BuddyChat() {
       </div>
 
       {/* Content Container - Fixed Height */}
-      <div className="relative z-10 flex flex-col h-full">
+      <div className="relative z-10 flex flex-col h-full overflow-hidden">
         
         {/* Top Section - Welcome or Speech Bubble */}
         <div className="flex-shrink-0 pt-4 px-4 min-h-[20vh] flex items-center justify-center">
@@ -120,13 +120,11 @@ export default function BuddyChat() {
         </div>
 
         {/* Middle Section - Dog */}
-        <div className="flex-1 flex items-end justify-center pb-4">
-          <div className="relative">
-            <DogSprite 
-              action={dogAction}
-              className="drop-shadow-2xl"
-            />
-          </div>
+        <div className="flex-1 flex items-end justify-center pb-4 overflow-hidden">
+          <DogSprite 
+            action={dogAction}
+            className="drop-shadow-2xl"
+          />
         </div>
 
         {/* Bottom Section - Input (Fixed) */}

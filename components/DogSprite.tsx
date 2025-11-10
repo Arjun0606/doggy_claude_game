@@ -51,15 +51,20 @@ export default function DogSprite({ action, className = '' }: DogSpriteProps) {
   const row = Math.floor(frame / currentAnim.columns);
   
   // Display size - scaled to fit nicely in the room
-  const displayWidth = 180;
+  const displayWidth = 150;
   const displayHeight = (currentAnim.frameHeight / currentAnim.frameWidth) * displayWidth;
+  
+  // Calculate background size (total sprite sheet scaled)
+  const bgWidth = (currentAnim.totalWidth / currentAnim.frameWidth) * displayWidth;
+  const bgHeight = (currentAnim.totalHeight / currentAnim.frameHeight) * displayHeight;
 
   return (
     <div
-      className={`relative overflow-hidden ${className}`}
+      className={`relative ${className}`}
       style={{
         width: `${displayWidth}px`,
         height: `${displayHeight}px`,
+        overflow: 'hidden',
       }}
     >
       <div
@@ -67,7 +72,7 @@ export default function DogSprite({ action, className = '' }: DogSpriteProps) {
           width: `${displayWidth}px`,
           height: `${displayHeight}px`,
           backgroundImage: `url(${currentAnim.sprite})`,
-          backgroundSize: `${(currentAnim.totalWidth / currentAnim.frameWidth) * displayWidth}px ${(currentAnim.totalHeight / currentAnim.frameHeight) * displayHeight}px`,
+          backgroundSize: `${bgWidth}px ${bgHeight}px`,
           backgroundPosition: `-${column * displayWidth}px -${row * displayHeight}px`,
           backgroundRepeat: 'no-repeat',
           imageRendering: 'pixelated',
