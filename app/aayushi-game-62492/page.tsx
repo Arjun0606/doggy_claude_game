@@ -141,19 +141,20 @@ export default function BuddyChat() {
           <div className="flex justify-center items-center min-h-[40vh] px-4 mt-8 relative">
             <div className="relative">
               
-              {/* Speech Bubble */}
+              {/* Speech Bubble - Positioned Near Dog's Mouth */}
               <AnimatePresence>
                 {showSpeechBubble && currentBuddyMessage && (
                   <motion.div
-                    initial={{ scale: 0, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    initial={{ scale: 0, opacity: 0, x: -20, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, x: 0, y: 0 }}
                     exit={{ scale: 0, opacity: 0 }}
                     transition={{ type: 'spring', damping: 15 }}
-                    className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-6 w-[90vw] max-w-md z-20"
+                    className="absolute top-0 left-full ml-4 w-[85vw] max-w-md z-20"
                   >
                     <div className="bg-white rounded-3xl p-4 shadow-2xl border-4 border-purple-500 relative">
-                      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[20px] border-t-purple-500" />
-                      <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-t-[16px] border-t-white" />
+                      {/* Speech bubble tail pointing to dog's mouth */}
+                      <div className="absolute left-0 top-8 transform -translate-x-4 w-0 h-0 border-t-[16px] border-t-transparent border-b-[16px] border-b-transparent border-r-[20px] border-r-purple-500" />
+                      <div className="absolute left-0 top-8 transform -translate-x-3 w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-r-[16px] border-r-white" />
                       
                       <p className="text-purple-900 text-base font-bold leading-relaxed" style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}>
                         {currentBuddyMessage}
@@ -164,21 +165,21 @@ export default function BuddyChat() {
               </AnimatePresence>
 
               {/* ACTUAL DOG SPRITE ANIMATION */}
-              <motion.div
+      <motion.div
                 key={dogAnimation}
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.3 }}
-              >
-                <SpriteAnimation
+      >
+        <SpriteAnimation
                   spriteSheet={currentAnim.sheet}
                   frameWidth={frameDims.width}
                   frameHeight={frameDims.height}
                   totalFrames={currentAnim.frames}
                   fps={dogAnimation === 'excited' ? 12 : dogAnimation === 'happy' ? 10 : 8}
                   scale={0.15}
-                />
-              </motion.div>
+        />
+      </motion.div>
             </div>
           </div>
 
@@ -205,8 +206,8 @@ export default function BuddyChat() {
                   <div
                     key={idx}
                     className={`text-sm ${msg.role === 'user' ? 'text-right text-purple-800' : 'text-left text-purple-600'} font-semibold`}
-                    style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}
-                  >
+          style={{ fontFamily: "'Comic Neue', 'Comic Sans MS', cursive" }}
+        >
                     {msg.role === 'user' ? '💬 ' : '🐕 '}{msg.content}
                   </div>
                 ))}
@@ -241,9 +242,9 @@ export default function BuddyChat() {
                 Send
               </motion.button>
             </div>
-          </div>
-        </div>
-      </div>
+                </div>
+                </div>
+              </div>
 
     </div>
   );
