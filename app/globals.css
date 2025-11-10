@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    @apply bg-black;
+    font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+    overscroll-behavior: none;
+    touch-action: pan-x pan-y;
+  }
+}
+
+@layer utilities {
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+  
+  .comic-font {
+    font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+  }
+  
+  .text-stroke {
+    -webkit-text-stroke: 2px #000;
+    paint-order: stroke fill;
+  }
+  
+  .bounce-walk {
+    animation: bounceWalk 0.6s ease-in-out infinite;
+  }
+  
+  @keyframes bounceWalk {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+  
+  .wiggle {
+    animation: wiggle 0.5s ease-in-out infinite;
+  }
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .shake {
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .slide-in-left {
+    animation: slideInLeft 0.3s ease-out;
+  }
+  
+  @keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Sprite Animation for 4-frame sprites (128x32 = 4 frames of 32x32) */
+  .sprite-animate {
+    animation: spriteWalk 0.6s steps(4) infinite;
+  }
+  
+  @keyframes spriteWalk {
+    from { background-position-x: 0; }
+    to { background-position-x: -128px; }
+  }
+}
