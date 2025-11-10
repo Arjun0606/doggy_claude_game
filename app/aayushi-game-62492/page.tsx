@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import DogSprite from '@/components/DogSprite';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -159,8 +160,11 @@ export default function BuddyChat() {
                 )}
               </AnimatePresence>
 
-              {/* Dog Emoji (Temporary until we fix sprite rendering) */}
-              <div className="text-9xl drop-shadow-2xl">🐕</div>
+              {/* Animated Dog Sprite */}
+              <DogSprite 
+                action={isLoading || showSpeechBubble ? 'bark' : 'idle'}
+                className="drop-shadow-2xl"
+              />
             </motion.div>
           </div>
 

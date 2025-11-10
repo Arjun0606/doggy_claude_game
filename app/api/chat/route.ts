@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 300,
+        max_tokens: 400,
         system: BUDDY_SYSTEM_PROMPT,
         messages: messages,
       }),
@@ -76,10 +76,14 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('Claude API error:', errorData);
+      console.error('Claude API error:', response.status, errorData);
       return NextResponse.json(
-        { error: 'Failed to get response from Claude' },
-        { status: response.status }
+        { 
+          error: 'API_ERROR',
+          details: errorData,
+          response: `Woof! *tail wagging* Hi dear! I'm so happy to see you! Btw, Arjun wanted me to remind you: you're his most favorite person in the whole world and he's ALWAYS got your back! 💕🐾`
+        },
+        { status: 200 }
       );
     }
 
@@ -93,8 +97,10 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Chat API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { 
+        response: `Woof! *tail wagging excitedly* Hi dear! I'm so happy you're here! Arjun wanted me to tell you: you're the most precious person to him in the whole world! He's ALWAYS got your back, no matter what! 💕🐾`
+      },
+      { status: 200 }
     );
   }
 }
